@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Dịch Lớp Học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff;--surface:#f8fafc;--ink:#0f172a;--ink2:#334155;--mute:#64748b;--line:#e2e8f0;
+  --pri:#4f46e5;--pri-hover:#4338ca;--pri-soft:#eef2ff;--pri-text:#4338ca;
+  --rec:#dc2626;--ok:#15803d;--ok-soft:#f0fdf4;--warn:#b45309;
+  --r:14px;--tab:64px;--rail:240px;color-scheme:light
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+[hidden]{display:none!important}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* Nút */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:500;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--surface)}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.pri:hover{background:var(--pri-hover)}
+.btn.ghost{border-color:transparent;background:transparent;padding:0 12px;color:var(--ink2)}
+.btn.ghost:hover{background:var(--surface)}
+.btn.danger{color:var(--rec)}
+.icon-btn{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;border:0;background:transparent;color:var(--ink2);flex:none;transition:background .15s}
+.icon-btn:hover{background:var(--surface)}
+
+/* Điều hướng: dưới đáy trên điện thoại, cột trái trên máy tính */
+.nav{position:fixed;z-index:20;background:#fff}
+.nav a{display:flex;color:var(--mute);text-decoration:none;font-weight:500;transition:color .15s,background .15s}
+.nav a[aria-current=page]{color:var(--pri-text)}
+.pill{display:grid;place-items:center;border-radius:999px;transition:background .15s}
+.brand{display:none}
+@media (max-width:899px){
+  .nav{left:0;right:0;bottom:0;height:calc(var(--tab) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr)}
+  .nav a{flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px}
+  .pill{width:60px;height:30px}
+  .nav a[aria-current=page] .pill{background:var(--pri-soft)}
+  .main{padding-bottom:calc(var(--tab) + env(safe-area-inset-bottom))}
+}
+@media (min-width:900px){
+  .nav{top:0;bottom:0;left:0;width:var(--rail);border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;padding:6px 12px 22px}
+  .brand .logo{width:36px;height:36px;border-radius:10px;background:var(--pri);color:#fff;display:grid;place-items:center}
+  .nav a{align-items:center;gap:12px;padding:0 14px;min-height:46px;border-radius:12px}
+  .nav a:hover{background:var(--surface);color:var(--ink)}
+  .nav a[aria-current=page]{background:var(--pri-soft);color:var(--pri-text)}
+  .main{margin-left:var(--rail)}
+}
+
+/* Thanh tiêu đề */
+.appbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.appbar-in{max-width:792px;margin:0 auto;display:flex;align-items:center;gap:4px;min-height:60px;padding:0 8px 0 16px}
+.appbar-in.has-back{padding-left:4px}
+.appbar h1{flex:1;min-width:0;margin:0;font-size:22px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#actions{display:flex;gap:2px}
+@media (max-width:599px){#actions .lbl{display:none}#actions .btn{width:44px;padding:0}}
+
+.wrap{max-width:792px;margin:0 auto;padding:16px}
+
+/* Màn Dịch */
+.langbar{display:grid;grid-template-columns:1fr 44px 1fr;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px}
+.lang{text-align:center;padding:6px 8px;border-radius:11px;font-weight:600;line-height:1.3}
+.lang small{display:block;font-size:12px;font-weight:500;color:var(--mute)}
+.lang.from{background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+#dir .ic{transition:transform .25s ease}
+#dir.flip .ic{transform:rotate(180deg)}
+.chip{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;color:var(--ink2)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+.chip.live .dot{background:var(--rec);animation:blink 1.2s ease-in-out infinite}
+.chip.warn{color:var(--warn)}.chip.warn .dot{background:var(--warn)}
+@keyframes blink{50%{opacity:.25}}
+
+.lines{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.ln{padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:#fff}
+.ln.interim{background:var(--surface);border-style:dashed}
+.meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--mute);font-weight:500}
+.src{color:var(--ink2);font-size:15px;margin-top:4px}
+.dst{font-size:20px;font-weight:600;line-height:1.45;margin-top:6px;min-height:1.45em}
+.dst.err{font-size:15px;font-weight:500;color:var(--rec)}
+.w{border-radius:4px;cursor:pointer;transition:background .15s,color .15s}
+.w:hover{background:var(--pri-soft);color:var(--pri-text)}
+
+.empty{text-align:center;padding:48px 16px;color:var(--mute)}
+.empty .art{width:72px;height:72px;border-radius:50%;background:var(--pri-soft);color:var(--pri-text);display:grid;place-items:center;margin:0 auto 16px}
+.empty .art .ic{width:32px;height:32px}
+.empty h2{font-size:18px;color:var(--ink);margin:0 0 6px}
+.empty p{margin:0 auto;max-width:360px;font-size:15px}
+
+.live-pad{padding-bottom:120px}
+.dock{position:fixed;left:0;right:0;bottom:calc(var(--tab) + env(safe-area-inset-bottom));z-index:15;background:linear-gradient(rgba(255,255,255,0),#fff 28%);padding:20px 16px 12px}
+@media (min-width:900px){.dock{left:var(--rail);bottom:0;padding-bottom:20px}}
+.dock-in{max-width:760px;margin:0 auto;display:flex;gap:12px;align-items:flex-end}
+.compose{flex:1;min-width:0;display:flex;align-items:flex-end;gap:4px;background:#fff;border:1px solid var(--line);border-radius:26px;padding:4px 4px 4px 18px;box-shadow:0 2px 12px rgba(15,23,42,.06);transition:border-color .15s}
+.compose:focus-within{border-color:var(--pri)}
+.compose textarea{flex:1;min-width:0;border:0;outline:0;resize:none;padding:11px 0;max-height:120px;background:transparent;line-height:1.4}
+.compose .icon-btn{border-radius:50%;color:var(--pri-text)}
+.mic{width:56px;height:56px;border-radius:50%;border:0;background:var(--pri);color:#fff;display:grid;place-items:center;flex:none;position:relative;box-shadow:0 6px 16px rgba(79,70,229,.35);transition:background .2s,box-shadow .2s}
+.mic:hover{background:var(--pri-hover)}
+.mic .ic{width:26px;height:26px}
+.mic.on{background:var(--rec);box-shadow:0 6px 16px rgba(220,38,38,.35)}
+.mic.on::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--rec);animation:pulse 1.4s ease-out infinite}
+@keyframes pulse{from{opacity:.7;transform:scale(.92)}to{opacity:0;transform:scale(1.25)}}
+
+/* Danh sách */
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:4px 0 12px}
+.sec h2{font-size:14px;color:var(--mute);font-weight:600;margin:0}
+.sec span{font-size:14px;color:var(--mute)}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);text-decoration:none;color:inherit;background:#fff;transition:border-color .15s,background .15s}
+a.row:hover{border-color:#c7d2fe;background:#fcfcff}
+.tile{width:44px;height:44px;border-radius:12px;background:var(--pri-soft);color:var(--pri-text);display:grid;place-items:center;flex:none}
+.body{flex:1;min-width:0}
+.t1{font-weight:600}
+.t2{font-size:14px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-block;font-size:12px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:2px}
+.chev{color:var(--mute)}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:0 12px;min-height:48px;background:var(--surface);margin-bottom:16px;color:var(--mute);transition:border-color .15s}
+.search:focus-within{border-color:var(--pri);background:#fff}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:10px 0;color:var(--ink)}
+.vrow{align-items:flex-start}
+.word{font-weight:700;font-size:17px}
+.mean{color:var(--pri-text);font-weight:500}
+.ctx{font-size:14px;color:var(--mute);margin-top:4px}
+
+/* Bảng tra từ: trượt từ đáy trên điện thoại */
+dialog{border:0;padding:0;border-radius:20px;width:min(480px,calc(100vw - 32px));box-shadow:0 20px 50px rgba(15,23,42,.2);color:var(--ink)}
+dialog::backdrop{background:rgba(15,23,42,.4)}
+@media (max-width:599px){dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom)}}
+.sheet{padding:20px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-6px -8px 12px 0}
+.sheet-head h2{font-size:26px;margin:0}
+.field{display:block;font-size:14px;font-weight:500;color:var(--ink2);margin-top:12px}
+.field input{display:block;width:100%;margin-top:6px;min-height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;font-size:16px}
+.field input:focus{border-color:var(--pri);outline:0}
+.ctxbox{margin-top:6px;background:var(--surface);border-radius:12px;padding:12px 14px;color:var(--ink2);font-size:15px;font-weight:400}
+.sheet-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+@media (max-width:599px){.sheet-foot .btn{flex:1}}
+
+.toast{position:fixed;left:50%;bottom:calc(var(--tab) + 112px + env(safe-area-inset-bottom));transform:translate(-50%,8px);z-index:30;background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (min-width:900px){.toast{left:calc(50% + var(--rail) / 2);bottom:120px}}
+@media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+  <symbol id="i-lang" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+<nav class="nav" aria-label="Điều hướng chính">
+  <div class="brand"><span class="logo"><svg class="ic"><use href="#i-lang"/></svg></span>Dịch Lớp Học</div>
+  <a href="#/dich"><span class="pill"><svg class="ic" aria-hidden="true"><use href="#i-lang"/></svg></span><span>Dịch</span></a>
+  <a href="#/bai"><span class="pill"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></span><span>Bài học</span></a>
+  <a href="#/tu"><span class="pill"><svg class="ic" aria-hidden="true"><use href="#i-bookmark"/></svg></span><span>Từ vựng</span></a>
+</nav>
+
+<div class="main">
+  <header class="appbar">
+    <div class="appbar-in" id="appbar">
+      <button class="icon-btn" id="back" aria-label="Quay lại" hidden><svg class="ic"><use href="#i-back"/></svg></button>
+      <h1 id="title">Dịch</h1>
+      <div id="actions"></div>
+    </div>
+  </header>
+
+  <section id="v-dich" class="wrap live-pad">
+    <div class="langbar">
+      <div class="lang from"><small>Nghe / gõ</small><span id="langFrom">Tiếng Pháp</span></div>
+      <button class="icon-btn" id="dir" aria-label="Đổi hướng dịch"><svg class="ic"><use href="#i-swap"/></svg></button>
+      <div class="lang"><small>Dịch sang</small><span id="langTo">Tiếng Việt</span></div>
+    </div>
+    <div class="chip" id="status" role="status"><span class="dot"></span><span id="statusText">Sẵn sàng</span></div>
+
+    <div class="lines" id="lines"></div>
+    <div class="ln interim" id="interim" hidden><div class="meta"><span>Đang nghe…</span></div><div class="src"></div><div class="dst"></div></div>
+    <div class="empty" id="liveEmpty">
+      <div class="art"><svg class="ic"><use href="#i-mic"/></svg></div>
+      <h2>Bấm micro để bắt đầu nghe</h2>
+      <p>Bản dịch hiện ngay khi giảng viên nói. Bấm vào một từ tiếng Pháp để lưu vào sổ từ vựng.</p>
+    </div>
+
+    <div class="dock">
+      <div class="dock-in">
+        <form class="compose" id="typed">
+          <textarea id="typedText" rows="1" aria-label="Gõ câu cần dịch" placeholder="Gõ câu tiếng Pháp…"></textarea>
+          <button class="icon-btn" aria-label="Dịch câu đã gõ"><svg class="ic"><use href="#i-send"/></svg></button>
+        </form>
+        <button class="mic" id="mic" aria-label="Bắt đầu nghe" aria-pressed="false"><svg class="ic"><use href="#i-mic"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="v-bai" class="wrap" hidden>
+    <div class="sec"><h2>Các buổi học đã lưu</h2><span id="baiCount"></span></div>
+    <div class="list" id="baiList"></div>
+  </section>
+
+  <section id="v-baiChiTiet" class="wrap" hidden>
+    <div class="sec"><h2 id="baiMeta"></h2></div>
+    <div class="lines" id="baiLines"></div>
+  </section>
+
+  <section id="v-tu" class="wrap" hidden>
+    <label class="search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="vq" placeholder="Tìm từ hoặc nghĩa…" aria-label="Tìm từ vựng"></label>
+    <div class="sec"><h2>Sổ từ vựng</h2><span id="tuCount"></span></div>
+    <div class="list" id="tuList"></div>
+  </section>
+</div>
+
+<dialog id="wd" aria-labelledby="wword">
+  <form method="dialog" class="sheet">
+    <div class="sheet-head">
+      <h2 id="wword"></h2>
+      <button class="icon-btn" value="cancel" aria-label="Đóng"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <label class="field">Nghĩa (sửa lại nếu máy dịch chưa đúng)<input type="text" id="wmean"></label>
+    <div class="field">Câu ngữ cảnh<div class="ctxbox" id="wctx"></div></div>
+    <div class="sheet-foot">
+      <button class="btn" value="cancel">Đóng</button>
+      <button class="btn pri" value="save"><svg class="ic" aria-hidden="true"><use href="#i-bookmark"/></svg>Lưu từ</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const ICON = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const NAME = {fr:'Pháp', vi:'Việt'}, LANG = {fr:'fr-FR', vi:'vi-VN'};
+// shortcut: lưu trong localStorage (~5 MB, khoảng 30 buổi học); cần nhiều hơn hoặc đồng bộ nhiều máy thì chuyển IndexedDB/Supabase
+const store = {
+  get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)) } catch { status('Không lưu được: bộ nhớ trình duyệt đầy hoặc bị chặn. Hãy xuất file.', 'warn') } }
+};
+let sessions = store.get('dl.sessions', []), vocab = store.get('dl.vocab', []);
+let cur = null, dir = 'fr-vi', running = false, rec;
+const pair = () => dir.split('-');
+const time = t => new Date(t).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+const saveSessions = () => store.set('dl.sessions', sessions);
+function status(msg, kind = ''){ $('#statusText').textContent = msg; $('#status').className = 'chip ' + kind }
+let toastTimer;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400) }
+
+/* ---------- Dịch: Chrome Translator API (trên máy, 0đ) → dự phòng MyMemory ---------- */
+const eng = {};
+function engine(from, to){
+  const k = from + '-' + to;
+  return eng[k] ??= (async () => {
+    if (!('Translator' in self)) return null;
+    if (await Translator.availability({sourceLanguage: from, targetLanguage: to}) === 'unavailable') return null;
+    return Translator.create({sourceLanguage: from, targetLanguage: to, monitor(m){
+      m.addEventListener('downloadprogress', e => status(`Đang tải gói dịch ${NAME[from]}→${NAME[to]}: ${Math.round(e.loaded * 100)}%`));
+    }});
+  })().catch(e => { console.warn(e); delete eng[k]; return null }); // lỗi (vd. thiếu thao tác người dùng) thì lần sau thử lại
+}
+async function translate(text, from, to, online = true){
+  // gói dịch đang tải (hoặc API treo) thì không chờ: câu này dịch online, gói tải xong sẽ dùng cho câu sau
+  const t = await Promise.race([engine(from, to), new Promise(r => setTimeout(r, 2500, null))]);
+  if (t) return t.translate(text);
+  if (!online) return null;
+  // shortcut: MyMemory miễn phí ~5.000 ký tự/ngày/IP, 500 ký tự/lần; dùng nhiều thì chuyển Azure Translator (2 triệu ký tự/tháng)
+  const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 500))}&langpair=${from}|${to}`);
+  const j = await r.json();
+  if (j.responseStatus != 200) throw new Error(j.responseDetails || 'dịch online lỗi');
+  return j.responseData.translatedText;
+}
+
+/* ---------- Hiển thị câu; từ tiếng Pháp bấm được ---------- */
+function fill(el, text, isFr){
+  el.textContent = '';
+  if (!isFr) { el.textContent = text; return }
+  text.split(/(\p{L}+(?:-\p{L}+)*)/u).forEach((part, i) => {
+    if (i % 2) { const s = document.createElement('span'); s.className = 'w'; s.textContent = part; el.append(s) }
+    else el.append(part);
+  });
+}
+function setDst(el, ln){
+  el.classList.toggle('err', ln.dst.startsWith('Không dịch được'));
+  fill(el, ln.dst || '…', ln.to === 'fr' && !!ln.dst);
+}
+function renderLine(ln){
+  const d = document.createElement('div'); d.className = 'ln';
+  d.innerHTML = '<div class="meta"><span class="tm"></span><span class="dr"></span></div><div class="src"></div><div class="dst"></div>';
+  d.querySelector('.tm').textContent = time(ln.t);
+  d.querySelector('.dr').textContent = `${NAME[ln.from]} → ${NAME[ln.to]}`;
+  fill(d.querySelector('.src'), ln.src, ln.from === 'fr');
+  setDst(d.querySelector('.dst'), ln);
+  return d;
+}
+const syncEmpty = () => $('#liveEmpty').hidden = $('#lines').children.length > 0 || !$('#interim').hidden;
+const nearBottom = () => innerHeight + scrollY > document.body.scrollHeight - 240;
+
+async function addLine(src){
+  if (!src) return;
+  const [from, to] = pair(), ln = {t: Date.now(), from, to, src, dst: ''};
+  if (!cur) { cur = {id: Date.now(), title: 'Buổi học ' + new Date().toLocaleString('vi-VN', {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'}), lines: []}; sessions.unshift(cur) }
+  cur.lines.push(ln);
+  const stick = nearBottom(), el = renderLine(ln);
+  $('#lines').append(el); syncEmpty();
+  if (stick) scrollTo(0, document.body.scrollHeight);
+  try { ln.dst = await translate(src, from, to) } catch (e) { ln.dst = 'Không dịch được: ' + e.message }
+  setDst(el.querySelector('.dst'), ln);
+  saveSessions();
+}
+
+/* ---------- Nhận giọng nói: Web Speech API ---------- */
+const SR = self.SpeechRecognition || self.webkitSpeechRecognition;
+let interimTimer;
+function showInterim(txt){
+  const box = $('#interim');
+  box.hidden = !txt; syncEmpty();
+  box.querySelector('.src').textContent = txt;
+  clearTimeout(interimTimer);
+  if (!txt) { box.querySelector('.dst').textContent = ''; return }
+  if (nearBottom()) scrollTo(0, document.body.scrollHeight);
+  const [f, t] = pair();
+  // chỉ dịch câu đang nói dở khi có bộ dịch trên máy, để không đốt hạn mức online
+  interimTimer = setTimeout(async () => {
+    const r = await translate(txt, f, t, false).catch(() => null);
+    if (r && !box.hidden) box.querySelector('.dst').textContent = r;
+  }, 400);
+}
+function startRec(){
+  rec = new SR();
+  rec.lang = LANG[pair()[0]]; rec.continuous = true; rec.interimResults = true;
+  rec.onresult = e => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) addLine(r[0].transcript.trim()); else interim += r[0].transcript;
+    }
+    showInterim(interim.trim());
+  };
+  rec.onerror = e => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { stop(); status('Chưa được cấp quyền micro. Bấm biểu tượng ổ khóa trên thanh địa chỉ để cho phép.', 'warn') }
+    else if (e.error !== 'no-speech' && e.error !== 'aborted') status('Lỗi nhận giọng: ' + e.error, 'warn');
+  };
+  rec.onend = () => { if (running) try { rec.start() } catch { startRec() } }; // Chrome tự ngắt sau khoảng lặng → nghe lại
+  rec.start();
+}
+const listening = () => status(`Đang nghe tiếng ${NAME[pair()[0]]}…`, 'live');
+function start(){
+  if (!SR) return status('Trình duyệt này không nhận giọng nói được. Hãy dùng Chrome hoặc Edge.', 'warn');
+  running = true; engine(...pair()); engine('fr', 'vi'); // tải sẵn gói dịch trong lúc có thao tác bấm
+  startRec(); ui(); listening();
+}
+function stop(){ running = false; rec?.stop(); showInterim(''); ui(); status('Đã dừng nghe') }
+function ui(){
+  const [f, t] = pair();
+  const mic = $('#mic');
+  mic.classList.toggle('on', running);
+  mic.setAttribute('aria-pressed', running);
+  mic.setAttribute('aria-label', running ? 'Dừng nghe' : 'Bắt đầu nghe');
+  mic.innerHTML = ICON(running ? 'stop' : 'mic');
+  $('#langFrom').textContent = 'Tiếng ' + NAME[f];
+  $('#langTo').textContent = 'Tiếng ' + NAME[t];
+  $('#typedText').placeholder = `Gõ câu tiếng ${NAME[f]}…`;
+}
+
+$('#mic').onclick = () => running ? stop() : start();
+$('#dir').onclick = () => {
+  dir = dir === 'fr-vi' ? 'vi-fr' : 'fr-vi';
+  $('#dir').classList.toggle('flip');
+  engine(...pair()); ui();
+  if (running) { rec.onend = null; rec.abort(); showInterim(''); startRec(); listening() }
+};
+$('#typed').onsubmit = e => { e.preventDefault(); engine(...pair()); addLine($('#typedText').value.trim()); $('#typedText').value = ''; autoGrow() };
+const autoGrow = () => { const t = $('#typedText'); t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px' };
+$('#typedText').oninput = autoGrow;
+$('#typedText').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#typed').requestSubmit() } };
+function newLesson(){
+  if (!cur) return toast('Đang ở buổi học mới rồi');
+  cur = null; $('#lines').textContent = ''; syncEmpty();
+  toast('Đã mở buổi học mới. Buổi trước nằm trong "Bài học".');
+}
+
+/* ---------- Sổ từ vựng ---------- */
+document.addEventListener('click', async e => {
+  const w = e.target.closest('.w'); if (!w) return;
+  $('#wword').textContent = w.textContent;
+  $('#wctx').textContent = w.parentElement.textContent;
+  $('#wmean').value = ''; $('#wmean').placeholder = 'Đang tra…';
+  $('#wd').showModal();
+  try { $('#wmean').value ||= await translate(w.textContent, 'fr', 'vi') } catch {}
+  $('#wmean').placeholder = 'Gõ nghĩa của từ';
+});
+$('#wd').onclose = () => {
+  if ($('#wd').returnValue !== 'save') return;
+  const word = $('#wword').textContent, key = word.toLowerCase();
+  vocab = vocab.filter(v => v.word.toLowerCase() !== key);
+  vocab.unshift({word, mean: $('#wmean').value.trim(), ctx: $('#wctx').textContent, t: Date.now()});
+  store.set('dl.vocab', vocab); toast(`Đã lưu "${word}" vào sổ từ vựng`);
+};
+function renderVocab(){
+  const q = $('#vq').value.trim().toLowerCase(), box = $('#tuList');
+  const list = vocab.filter(v => !q || (v.word + ' ' + v.mean).toLowerCase().includes(q));
+  $('#tuCount').textContent = vocab.length ? `${vocab.length} từ` : '';
+  box.textContent = '';
+  if (!list.length) {
+    box.innerHTML = `<div class="empty"><div class="art">${ICON('bookmark')}</div><h2>${q ? 'Không tìm thấy từ nào' : 'Sổ từ vựng còn trống'}</h2><p>${q ? 'Thử tìm bằng từ khác.' : 'Trong màn Dịch, bấm vào một từ tiếng Pháp để lưu kèm nghĩa và câu ví dụ.'}</p></div>`;
+    return;
+  }
+  for (const v of list) {
+    const c = document.createElement('div'); c.className = 'row vrow';
+    c.innerHTML = `<div class="body"><div class="word"></div><div class="mean"></div><div class="ctx"></div></div><button class="icon-btn">${ICON('trash')}</button>`;
+    c.querySelector('.word').textContent = v.word;
+    c.querySelector('.mean').textContent = v.mean || '(chưa có nghĩa)';
+    c.querySelector('.ctx').textContent = v.ctx;
+    const del = c.querySelector('button');
+    del.setAttribute('aria-label', `Xóa từ ${v.word}`);
+    del.onclick = () => { vocab = vocab.filter(x => x !== v); store.set('dl.vocab', vocab); renderVocab(); toast(`Đã xóa "${v.word}"`) };
+    box.append(c);
+  }
+}
+$('#vq').oninput = renderVocab;
+const csv = s => '"' + String(s).replace(/"/g, '""') + '"';
+const exportVocab = () => vocab.length ? download('tu-vung.csv', ['Từ,Nghĩa,Ngữ cảnh', ...vocab.map(v => [v.word, v.mean, v.ctx].map(csv).join(','))].join('\n'), 'text/csv') : toast('Chưa có từ nào để xuất');
+
+/* ---------- Bài học ---------- */
+function download(name, text, type){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + text], {type: type + ';charset=utf-8'})); // BOM để Excel đọc đúng tiếng Việt
+  a.download = name.replace(/[\\/:*?"<>|]/g, '-');
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function renderLessons(){
+  const box = $('#baiList'); box.textContent = '';
+  $('#baiCount').textContent = sessions.length ? `${sessions.length} buổi` : '';
+  if (!sessions.length) {
+    box.innerHTML = `<div class="empty"><div class="art">${ICON('book')}</div><h2>Chưa có buổi học nào</h2><p>Mỗi lần nghe hoặc gõ để dịch, app tự lưu lại thành một buổi học song ngữ.</p></div>`;
+    return;
+  }
+  for (const s of sessions) {
+    const a = document.createElement('a'); a.className = 'row'; a.href = '#/bai/' + s.id;
+    a.innerHTML = `<div class="tile">${ICON('book')}</div><div class="body"><div class="t1"></div><div class="t2"></div></div><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg>`;
+    a.querySelector('.t1').textContent = s.title;
+    if (s === cur) a.querySelector('.t1').insertAdjacentHTML('beforeend', '<span class="badge">Đang học</span>');
+    a.querySelector('.t2').textContent = `${s.lines.length} câu · ${s.lines[0]?.src ?? ''}`;
+    box.append(a);
+  }
+}
+function lessonActions(s){
+  return [
+    {icon:'download', label:'Xuất .txt', fn: () => download(s.title + '.txt', s.title + '\n\n' + s.lines.map(l => `[${time(l.t)}] ${l.src}\n→ ${l.dst}`).join('\n\n'), 'text/plain')},
+    {icon:'pencil', label:'Đổi tên', fn: () => { const n = prompt('Tên buổi học:', s.title)?.trim(); if (n) { s.title = n; saveSessions(); route() } }},
+    {icon:'trash', label:'Xóa', danger: true, fn: () => { if (confirm(`Xóa "${s.title}"? Không khôi phục được.`)) { sessions = sessions.filter(x => x !== s); if (s === cur) { cur = null; $('#lines').textContent = ''; syncEmpty() } saveSessions(); location.hash = '#/bai'; toast('Đã xóa buổi học') } }}
+  ];
+}
+
+/* ---------- Điều hướng theo #hash để nút Back của điện thoại hoạt động ---------- */
+function setBar(title, back, actions = []){
+  $('#title').textContent = title;
+  $('#back').hidden = !back; $('#appbar').classList.toggle('has-back', !!back);
+  $('#actions').replaceChildren(...actions.map(a => {
+    const b = document.createElement('button');
+    b.className = 'btn ghost' + (a.danger ? ' danger' : '');
+    b.innerHTML = ICON(a.icon) + '<span class="lbl"></span>';
+    b.querySelector('.lbl').textContent = a.label;
+    b.setAttribute('aria-label', a.label); b.title = a.label;
+    b.onclick = a.fn; return b;
+  }));
+}
+function route(){
+  const [, v = 'dich', id] = location.hash.split('/');
+  const s = id && sessions.find(x => String(x.id) === id);
+  const view = v === 'bai' ? (s ? 'baiChiTiet' : 'bai') : v === 'tu' ? 'tu' : 'dich';
+  for (const x of ['dich', 'bai', 'baiChiTiet', 'tu']) $('#v-' + x).hidden = x !== view;
+  document.querySelectorAll('.nav a').forEach(a => { if (a.getAttribute('href') === '#/' + (view === 'baiChiTiet' ? 'bai' : view)) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current') });
+  if (view === 'dich') setBar('Dịch', false, [{icon:'plus', label:'Buổi mới', fn: newLesson}]);
+  if (view === 'bai') { setBar('Bài học', false); renderLessons() }
+  if (view === 'baiChiTiet') {
+    setBar(s.title, true, lessonActions(s));
+    $('#baiMeta').textContent = `${s.lines.length} câu · ${new Date(s.id).toLocaleDateString('vi-VN')}`;
+    $('#baiLines').replaceChildren(...s.lines.map(renderLine));
+  }
+  if (view === 'tu') { setBar('Từ vựng', false, [{icon:'download', label:'Xuất CSV', fn: exportVocab}]); renderVocab() }
+  scrollTo(0, view === 'dich' ? document.body.scrollHeight : 0);
+}
+$('#back').onclick = () => location.hash = '#/bai';
+addEventListener('hashchange', route);
+
+ui(); route(); syncEmpty();
+if (!SR) status('Trình duyệt này không nhận giọng nói. Dùng Chrome hoặc Edge (vẫn gõ để dịch được).', 'warn');
+else if (!('Translator' in self)) status('Đang dùng dịch online miễn phí (giới hạn mỗi ngày). Chrome máy tính dịch không giới hạn.', 'warn');
+else status('Sẵn sàng');
+</script>
+</body>
+</html>
